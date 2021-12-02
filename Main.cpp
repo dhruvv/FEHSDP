@@ -6,19 +6,53 @@ class Player1{
     public:
         Player1();
         void drawSelf();
-        
+        void updatePosition();
+        void shoot();
         
     private:
+        int pos = 140;
+        char name[30];
         int points;
         int lives;
         int x_coordinate;
 
     
 };
+Player1::Player1(){
+
+}
+void Player1::drawSelf(){
+    pos = 140;
+    LCD.DrawRectangle(pos,220, 20, 20);
+    LCD.FillRectangle(pos, 220, 20, 20);
+}
+void Player1::updatePosition(){
+    float x, y;
+    pos = 140;
+    while(LCD.Touch(&x, &y)){
+        if(((x < 30) & (x > 0)) & ((y < 220) & (y > 240))){
+            pos -= 1;
+            LCD.Clear();
+            LCD.DrawRectangle(pos ,220, 20, 20);
+            LCD.FillRectangle(pos , 220, 20, 20);
+        }
+        else if(((x < 320) & (x > 290)) & ((y < 220) & (y > 240))){
+            pos += 1;
+            LCD.Clear();
+            LCD.DrawRectangle(pos ,220, 20, 20);
+            LCD.FillRectangle(pos , 220, 20, 20);
+        }
+    }
+}
+
+
+void Player1::shoot(){
+    LCD.DrawRectangle((pos - 10), 220, 3, 8);
+}
 
 class Player2 {
     public:
-        Player2();
+        Player2(int *initLocation);
         void drawSelf();
         
     private:
@@ -27,6 +61,10 @@ class Player2 {
         int x_coordinate;
 
 };
+
+Player2::Player2(int *initLocation){
+    
+}
 
 class allEnemies{
     
@@ -45,9 +83,12 @@ class Ememy{
 void playGameScreen(int *returnVal){
     float x,y;
     LCD.Clear();
+    Player1 player;
     // Put game logic here
+    player.drawSelf();
     while (1){
-        LCD.DrawRectangle(10, 10, 60, 25);
+        player.updatePosition();
+        /*
         LCD.WriteAt("Back", 10, 10);
         LCD.WriteAt("Gameplay goes here", 150,150);
         if (LCD.Touch(&x, &y)){
@@ -56,6 +97,7 @@ void playGameScreen(int *returnVal){
                 break;
             } 
         }
+        */
     }
     
 }
@@ -98,7 +140,6 @@ void creditScreen(int *returnVal){
 void instructScreen(int *returnVal){
     float x,y;
     LCD.Clear();
-    LCD.SetBackgroundColor(RED);
     while (1){
         LCD.WriteAt("Instructions:", 100, 10);
         LCD.WriteAt("Your objective is to", 10, 40);
@@ -123,8 +164,9 @@ void startScreen(int *returnVal){
         LCD.Clear();
         float x, y;
         while (1){
+            LCD.SetBackgroundColor(GRAY);
             LCD.SetFontColor(RED);
-            LCD.WriteAt("*Space Invaders*", 100, 10);
+            LCD.WriteAt("*Space Invaders*", 75, 10);
             LCD.SetFontColor(WHITE);
             LCD.DrawRectangle(10, 30, 310, 40);
             LCD.DrawRectangle(10, 70, 310, 40);
@@ -134,11 +176,11 @@ void startScreen(int *returnVal){
             //LCD.WriteAt("Welcome To Space-Invaders", 0, 0);
             //LCD.DrawCircle(150,150, 30);
             //LCD.WriteAt("Stats", 150, 150);
-            LCD.WriteAt("Play Game", 10, 10);
-            LCD.WriteAt("Statistics", 10, 50);
-            LCD.WriteAt("Credits", 10, 90);
-            LCD.WriteAt("Exit", 10, 130 );
-            LCD.WriteAt("Instructions", 10, 170);
+            LCD.WriteAt("Play Game", 10, 30);
+            LCD.WriteAt("Statistics", 10, 70);
+            LCD.WriteAt("Credits", 10, 110);
+            LCD.WriteAt("Exit", 10, 150 );
+            LCD.WriteAt("Instructions", 10, 190);
             if(LCD.Touch(&x,&y)){
                 if (((x < 310) & (x > 10)) & ((y > 30) & (y < 70))){
                     //LCD.WriteLine("Play Game Recorded");
@@ -171,7 +213,6 @@ void startScreen(int *returnVal){
         }
 
 }
-
 
 
 int main(){
