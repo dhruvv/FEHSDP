@@ -5,8 +5,8 @@
 class Player1{
     public:
         Player1();
-        void drawSelf();
-        void updatePosition();
+        void drawSelf(int);
+        //void updatePosition();
         void shoot();
         
     private:
@@ -21,11 +21,18 @@ class Player1{
 Player1::Player1(){
 
 }
-void Player1::drawSelf(){
-    pos = 140;
-    LCD.DrawRectangle(pos,220, 20, 20);
-    LCD.FillRectangle(pos, 220, 20, 20);
+void Player1::drawSelf(int x){
+    LCD.Clear();
+    pos = x;
+    if ( ((x == 0) | (x < 0))) {
+        pos = 0;
+    } else if ((x > 300) | (x == 300)){
+        pos = 300;
+    }
+    LCD.DrawRectangle(pos,220, 5, 5);
+    LCD.FillRectangle(pos, 220, 5, 5);
 }
+/*
 void Player1::updatePosition(){
     float x, y;
     pos = 140;
@@ -44,6 +51,7 @@ void Player1::updatePosition(){
         }
     }
 }
+*/
 
 
 void Player1::shoot(){
@@ -85,9 +93,11 @@ void playGameScreen(int *returnVal){
     LCD.Clear();
     Player1 player;
     // Put game logic here
-    player.drawSelf();
-    while (1){
-        player.updatePosition();
+    player.drawSelf(160);
+    while (1)
+    {
+        if(LCD.Touch(&x, &y)){
+            player.drawSelf(x);
         /*
         LCD.WriteAt("Back", 10, 10);
         LCD.WriteAt("Gameplay goes here", 150,150);
@@ -98,7 +108,10 @@ void playGameScreen(int *returnVal){
             } 
         }
         */
+        }
     }
+    
+    
     
 }
 void statScreen(int *returnVal){
