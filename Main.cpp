@@ -50,7 +50,7 @@ private:
     int bullet_pos;
     char name[30];
     int points;
-    int i;
+    int i = 220;
     int x_coordinate;
 };
 Player1::Player1()
@@ -71,6 +71,19 @@ void Player1::drawSelf(int x)
     LCD.DrawRectangle(pos, 220, 10, 10);
     LCD.FillRectangle(pos, 220, 10, 10);
     LCD.DrawCircle(bullet_pos, i, 1);
+    /*
+    for (i = 210; i > 0; i--)
+    {
+        LCD.Clear();
+        LCD.DrawCircle(bullet_pos, i, 1);
+        Sleep(1);
+        LCD.SetFontColor(WHITE);
+    }
+    if (i <= 0)
+    {
+        LCD.Clear();
+    }
+    */
 }
 /*
 void Player1::updatePosition(){
@@ -97,22 +110,11 @@ void Player1::shoot()
 {
     bullet_pos = pos + 4;
 }
-
 void Player1::shoot2()
 {
 
-    LCD.DrawCircle(bullet_pos, 210, 1);
-    for (i = 210; i > 0; i--)
-    {
-        LCD.Clear();
-        LCD.DrawCircle(bullet_pos, i, 1);
-        Sleep(1);
-        LCD.SetFontColor(WHITE);
-    }
-    if (i <= 0)
-    {
-        LCD.Clear();
-    }
+    LCD.DrawCircle(bullet_pos, i, 1);
+    i--;
 }
 
 class Player2
@@ -146,10 +148,6 @@ private:
     int pos;
 };
 
-Enemy::Enemy()
-{
-}
-
 void playGameScreen(int *returnVal)
 {
     float x, y;
@@ -162,20 +160,11 @@ void playGameScreen(int *returnVal)
         if (LCD.Touch(&x, &y))
         {
             player.drawSelf(x);
-            // player.shoot();
-            //player.shoot2();
-            /*
-        LCD.WriteAt("Back", 10, 10);
-        LCD.WriteAt("Gameplay goes here", 150,150);
-        if (LCD.Touch(&x, &y)){
-            if(((x < 70) & (x > 10)) &((y < 35) & (y > 10))){
-                *returnVal = 4;
-                break;
-            } 
+            player.shoot();
+            player.shoot2();
         }
-        */
-        }
-        if (player.lives = 0)
+
+        if (player.lives == 0)
         {
             *returnVal = 6;
             break;
