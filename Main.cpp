@@ -64,9 +64,9 @@ void Player1::drawSelf(int x)
     {
         pos = 0;
     }
-    else if ((x > 300) | (x == 300))
+    else if ((x > 310) | (x == 300))
     {
-        pos = 300;
+        pos = 310;
     }
     LCD.DrawRectangle(pos, 220, 10, 10);
     LCD.FillRectangle(pos, 220, 10, 10);
@@ -157,8 +157,8 @@ void playGameScreen(int *returnVal)
         if (LCD.Touch(&x, &y))
         {
             player.drawSelf(x);
-            player.shoot();
-            player.shoot2();
+            // player.shoot();
+            //player.shoot2();
             /*
         LCD.WriteAt("Back", 10, 10);
         LCD.WriteAt("Gameplay goes here", 150,150);
