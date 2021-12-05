@@ -102,12 +102,16 @@ void Player1::shoot2()
 {
 
     LCD.DrawCircle(bullet_pos, 210, 1);
-    for (i = 210; i > 20; i--)
+    for (i = 210; i > 0; i--)
     {
-
-        LCD.SetFontColor(RED);
+        LCD.Clear();
         LCD.DrawCircle(bullet_pos, i, 1);
+        Sleep(1);
         LCD.SetFontColor(WHITE);
+    }
+    if (i <= 0)
+    {
+        LCD.Clear();
     }
 }
 
