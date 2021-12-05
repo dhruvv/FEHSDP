@@ -236,6 +236,55 @@ void instructScreen(int *returnVal)
     }
 }
 
+void loseScreen(int *returnVal)
+{
+
+    float x, y;
+    LCD.Clear();
+    LCD.WriteAt("*You Lose*", 80, 10);
+    LCD.WriteAt(("Points: 20"), 20, 40);
+    LCD.DrawRectangle(100, 120, 60, 20);
+    LCD.WriteAt("Replay", 105, 121);
+    LCD.DrawRectangle(100, 150, 60, 20);
+    LCD.WriteAt("Main Menu", 105, 151);
+    if (LCD.Touch(&x, &y))
+    {
+        if (((x > 100) & (x < 160)) & ((y > 120) & (y < 140)))
+        {
+            *returnVal = 0;
+        }
+        if (((x > 100) & (x < 160)) & ((y > 150) & (y < 170)))
+        {
+            *returnVal = 4;
+        }
+    }
+}
+
+void winScreen(int *returnVal)
+{
+
+    float x, y;
+    LCD.Clear();
+    LCD.WriteAt("*You Win*", 80, 10);
+    LCD.WriteAt("High Score: ", 20, 190);
+    LCD.WriteAt(("Points: 20"), 20, 40);
+    LCD.DrawRectangle(100, 120, 60, 20);
+    LCD.WriteAt("Replay", 105, 121);
+    LCD.DrawRectangle(100, 150, 60, 20);
+    LCD.WriteAt("Main Menu", 105, 151);
+    if (LCD.Touch(&x, &y))
+    {
+        if (((x > 100) & (x < 160)) & ((y > 120) & (y < 140)))
+        {
+            *returnVal = 0;
+        }
+        if (((x > 100) & (x < 160)) & ((y > 150) & (y < 170)))
+        {
+            *returnVal = 4;
+        }
+    }
+}
+
 void startScreen(int *returnVal)
 {
     LCD.Clear();
