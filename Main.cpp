@@ -43,6 +43,7 @@ public:
     //void updatePosition();
     void shoot();
     void shoot2();
+    int lives = 3;
 
 private:
     int pos = 140;
@@ -50,7 +51,6 @@ private:
     char name[30];
     int points;
     int i;
-    int lives = 3;
     int x_coordinate;
 };
 Player1::Player1()
@@ -174,6 +174,11 @@ void playGameScreen(int *returnVal)
             } 
         }
         */
+        }
+        if (player.lives = 0)
+        {
+            *returnVal = 6;
+            break;
         }
     }
 }
@@ -387,6 +392,10 @@ int main()
             break;
         case 5:
             instructScreen(&returnValue);
+            Sleep(.1);
+            break;
+        case 6:
+            loseScreen(&returnValue);
             Sleep(.1);
             break;
         }
