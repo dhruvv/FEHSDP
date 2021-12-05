@@ -1,6 +1,7 @@
 #include <FEHUtility.h>
 //#include <FEHIO.h>
 #include <FEHLCD.h>
+/*
 class Bullet
 {
 public:
@@ -10,7 +11,30 @@ public:
 
 private:
     int bullet_pos;
+    int pos = 140;
+    int x;
 };
+Bullet::Bullet(){
+
+}
+
+void Bullet::render_bullet(){
+    LCD.Clear();
+    pos = x;
+    if (((x == 0) | (x < 0)))
+    {
+        pos = 0;
+    }
+    else if ((x > 300) | (x == 300))
+    {
+        pos = 300;
+    }
+}
+
+void Bullet::render(){
+
+}
+*/
 class Player1
 {
 public:
