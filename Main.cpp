@@ -134,16 +134,21 @@ Player2::Player2(int *initLocation)
 class allEnemies
 {
 };
-class Ememy
+class Enemy
 {
 public:
-    void drawSelf()
-    {
-    }
+    void drawSelf();
+    void shapeSelect();
+    void move();
 
 private:
     int type;
+    int pos;
 };
+
+Enemy::Enemy()
+{
+}
 
 void playGameScreen(int *returnVal)
 {
