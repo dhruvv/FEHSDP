@@ -1,40 +1,51 @@
 #include <FEHUtility.h>
 //#include <FEHIO.h>
 #include <FEHLCD.h>
-/*
+#include <pthread.h>
+#define left_bound 0
+#define right_bound 320 
+#define top_bound 0
+#define bottom_bound 240
+class Enemy{
+    public:
+    void drawSelf();
+    void shapeSelect();
+    
+    private:
+    int bullet_pos = 0;
+    
+    
+};
 class Bullet
 {
-public:
-    Bullet();
-    void render_bullet();
-    void render();
+    public:
+        Bullet(int startX, int startY);
+        void drawSelf(int, int);
+        bool doesExist();
+    private:
+        int startX;
+        int startY;
+        int x;
+        int y;
 
-private:
-    int bullet_pos;
-    int pos = 140;
-    int x;
 };
-Bullet::Bullet(){
-
+Bullet::Bullet(int startX, int startY){
+    x = startX;
+    y = startY;
 }
-
-void Bullet::render_bullet(){
-    LCD.Clear();
-    pos = x;
-    if (((x == 0) | (x < 0)))
-    {
-        pos = 0;
+void Bullet::drawSelf(int x, int y)
+{
+    LCD.DrawCircle(x, y, 1);
+}
+bool Bullet::doesExist(){
+    if (y > 30){
+        return true;
+    } else {
+        return false;
     }
-    else if ((x > 300) | (x == 300))
-    {
-        pos = 300;
-    }
 }
 
-void Bullet::render(){
 
-}
-*/
 class Player1
 {
 public:
@@ -71,51 +82,21 @@ void Player1::drawSelf(int x)
     LCD.DrawRectangle(pos, 220, 10, 10);
     LCD.FillRectangle(pos, 220, 10, 10);
     LCD.DrawCircle(bullet_pos, i, 1);
-    /*
-    for (i = 210; i > 0; i--)
-    {
-        LCD.Clear();
-        LCD.DrawCircle(bullet_pos, i, 1);
-        Sleep(1);
-        LCD.SetFontColor(WHITE);
-    }
-    if (i <= 0)
-    {
-        LCD.Clear();
-    }
-    */
+
+    
 }
 /*
-void Player1::updatePosition(){
-    float x, y;
-    pos = 140;
-    while(LCD.Touch(&x, &y)){
-        if(((x < 30) & (x > 0)) & ((y < 220) & (y > 240))){
-            pos -= 1;
-            LCD.Clear();
-            LCD.DrawRectangle(pos ,220, 20, 20);
-            LCD.FillRectangle(pos , 220, 20, 20);
-        }
-        else if(((x < 320) & (x > 290)) & ((y < 220) & (y > 240))){
-            pos += 1;
-            LCD.Clear();
-            LCD.DrawRectangle(pos ,220, 20, 20);
-            LCD.FillRectangle(pos , 220, 20, 20);
-        }
-    }
-}
-*/
-
 void Player1::shoot()
 {
     bullet_pos = pos + 4;
 }
+*/
 void Player1::shoot2()
 {
-
-    LCD.DrawCircle(bullet_pos, i, 1);
-    i--;
+    bullet_pos = pos + 4;
+    
 }
+
 
 class Player2
 {
@@ -133,37 +114,41 @@ Player2::Player2(int *initLocation)
 {
 }
 
-class allEnemies
-{
-};
-class Enemy
-{
-public:
-    void drawSelf();
-    void shapeSelect();
-    void move();
-
-private:
-    int type;
-    int pos;
-};
 
 void playGameScreen(int *returnVal)
 {
     float x, y;
+    float bulletY;
+    float bulletX;
+    float time;
+    time = TimeNow();
+    float timeElapsed = 0;
     LCD.Clear();
     Player1 player;
     // Put game logic here
     player.drawSelf(160);
+    Bullet firedBullet(160, 100);
     while (1)
     {
+        timeElapsed = TimeNow() - time;
         if (LCD.Touch(&x, &y))
         {
             player.drawSelf(x);
-            player.shoot();
-            player.shoot2();
         }
-
+        timeElapsed = TimeNow() - time;
+        if (timeElapsed > 0.0167) {
+            LCD.Clear();
+            player.drawSelf(x);
+            bulletY = bulletY - 2.67;
+            if (bulletY > 30){
+                firedBullet.drawSelf(bulletX, bulletY);
+            } else {
+                bulletY = 220;
+                bulletX = x;
+                firedBullet.drawSelf(bulletX, bulletY);
+            }
+            time = TimeNow();
+        }
         if (player.lives == 0)
         {
             *returnVal = 6;
