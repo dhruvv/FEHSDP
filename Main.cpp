@@ -1,7 +1,9 @@
 #include <FEHUtility.h>
 //#include <FEHIO.h>
 #include <FEHLCD.h>
+//#include <FEHImages.h>
 #include <SFML/Audio.h>
+#include <math.h>
 #define left_bound 0
 #define right_bound 320 
 #define top_bound 0
@@ -15,7 +17,6 @@ class Bullet
         Bullet(int startX, int startY);
         void drawSelf(int, int);
         int x;
-
         int y;
     private:
         int startX;
@@ -39,12 +40,12 @@ void Bullet::drawSelf(int x, int y)
 class Enemy {
     private:
         int type;
-        bool toRender;
     public:
         Enemy();
         int x;
         int y;
-        void drawSelf();     
+        void drawSelf();
+        bool toRender;     
 };
 
 
@@ -56,9 +57,13 @@ Enemy::Enemy(){
 }
 void Enemy::drawSelf(){
     if (toRender){
+        LCD.SetFontColor(WHITE);
         LCD.DrawRectangle(x, y, 5, 5);
         LCD.FillRectangle(x, y, 5, 5);
     } else {
+        LCD.SetFontColor(RED);
+        LCD.DrawRectangle(x, y, 5, 5);
+        LCD.FillRectangle(x, y, 5, 5);
         // don't do anything now, we're not rendering this
     }
     
@@ -69,6 +74,7 @@ class Enemies{
         Enemies();
         void drawEnemies();
         void shiftEnemies();
+        bool checkCollision(Bullet);
     private:
         Enemy enemiesArray[7][4];
         Bullet firedBullets[7];
@@ -77,26 +83,52 @@ class Enemies{
         int y;
         int width;
         int height;
+        bool shift_Down;
 };
 Enemies::Enemies(){
     x = 0;
     y = 30;
     width = 49;
     height = 28;
+    shift_Down = false;
 }
 
+
+bool Enemies::checkCollision(Bullet playerBullet){
+    int i = 0;
+    int k = 0;
+    for (i = 0; i < 4; i++){
+        for (k = 0; k < 7; k++){
+            if (((abs(playerBullet.x - enemiesArray[i][k].x) < 5) | (abs(playerBullet.x - enemiesArray[i][k].x) == 5)) |((abs(playerBullet.y - enemiesArray[i][k].y) < 5) | (abs(playerBullet.y - enemiesArray[i][k].y) == 5)) ){
+                enemiesArray[i][k].toRender = false;
+                return true;
+            }   
+        }
+    }
+    return false;
+}
+
+
 void Enemies::shiftEnemies(){
-    bool shift_Down = false;
     if ((x + 49 != 299) & !shift_Down){
         x += 25;
+        shift_Down = false;
     }
     if ((x > 0) & shift_Down){
         x -= 25;
+        if(x == 0){
+            shift_Down = false;
+        }
     }
-    if (x + 49 == 299 | x < 0){
+    if (x + 49 == 299){
         y += 20;
         shift_Down = true;
     }
+    if (x == 0){
+        y += 20;
+        shift_Down = false;
+    }
+
     
 }
 
@@ -130,6 +162,7 @@ public:
     int pos = 140;
 private:
     int bullet_pos;
+    int score;
     char name[30];
     int points;
     int i = 220;
@@ -213,6 +246,9 @@ void playGameScreen(int *returnVal)
             firedBullet.y = firedBullet.y - 3.67;
             if (firedBullet.y > 30){
                 firedBullet.drawSelf(firedBullet.x, firedBullet.y);
+            } else if (e.checkCollision(firedBullet)) {
+                firedBullet.drawSelf(firedBullet.x, firedBullet.y);
+                LCD.WriteLine("Score update here");
             } else {
                 firedBullet.y = 220;
                 firedBullet.x = player.pos;
