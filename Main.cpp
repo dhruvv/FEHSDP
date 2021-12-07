@@ -80,25 +80,28 @@ class Enemies{
 Enemies::Enemies(){
     x = 0;
     y = 30;
-    width = 8 + 35;
-    height = 4 + 20;
+    width = 49;
+    height = 28;
 }
 
 
 void Enemies::drawEnemies(){
-    int spacer1 = 0;
-    int spacer2 = 0;
-    for (int i = 0; i < 7; i++){
-        for (int k = 0; k < 4; k++){
-            enemiesArray[i][k].x = x + i * 5 + spacer1;
-            enemiesArray[i][k].y = x + k * 5 + spacer2;
+    //LCD.WriteLine("loop executed");
+    LCD.DrawRectangle(x,y, width, height);
+        int j = 0;
+        int k = 0;
+        int y_pos;
+    for (int i = 0; i < 4; i++){
+        y_pos = i * 7; 
+        for (k = 0; k < 7; k++){
+            enemiesArray[i][k].x = x + 7*k;
+            enemiesArray[i][k].y = y + y_pos;
             enemiesArray[i][k].drawSelf();
-            spacer2 += 2;
         }
-        spacer1 += 2;
     } 
   //LCD.DrawRectangle(x, y, width, height);  
 }
+
 
 class Player1
 {
@@ -186,12 +189,12 @@ void playGameScreen(int *returnVal)
         if (LCD.Touch(&x, &y))
         {
             player.drawSelf(x);
+            
 
         }
         timeElapsed = TimeNow() - time;
         if (timeElapsed > 0.0167) {
             LCD.Clear();
-            e.drawEnemies();
             player.drawSelf(x);
             firedBullet.y = firedBullet.y - 3.67;
             if (firedBullet.y > 30){
@@ -202,6 +205,8 @@ void playGameScreen(int *returnVal)
                 firedBullet.drawSelf(firedBullet.x, firedBullet.y);
             }
             time = TimeNow();
+            e.drawEnemies();
+
         }
         if (player.lives == 0)
         {
