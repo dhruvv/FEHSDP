@@ -1,50 +1,104 @@
 #include <FEHUtility.h>
 //#include <FEHIO.h>
 #include <FEHLCD.h>
-#include <pthread.h>
+#include <SFML/Audio.h>
 #define left_bound 0
 #define right_bound 320 
 #define top_bound 0
 #define bottom_bound 240
-class Enemy{
-    public:
-    void drawSelf();
-    void shapeSelect();
-    
-    private:
-    int bullet_pos = 0;
-    
-    
-};
+
+
 class Bullet
 {
     public:
+        Bullet();
         Bullet(int startX, int startY);
         void drawSelf(int, int);
-        bool doesExist();
+        int x;
+        int y;
     private:
         int startX;
         int startY;
-        int x;
-        int y;
+
 
 };
 Bullet::Bullet(int startX, int startY){
     x = startX;
     y = startY;
 }
+Bullet::Bullet(){
+    x = 0;
+    y = 0;
+}
 void Bullet::drawSelf(int x, int y)
 {
     LCD.DrawCircle(x, y, 1);
 }
-bool Bullet::doesExist(){
-    if (y > 30){
-        return true;
+
+class Enemy {
+    private:
+        int type;
+        bool toRender;
+    public:
+        Enemy();
+        int x;
+        int y;
+        void drawSelf();     
+};
+
+
+Enemy::Enemy(){
+    type = 0;
+    toRender = true;
+    x = 0;
+    y = 0;
+}
+void Enemy::drawSelf(){
+    if (toRender){
+        LCD.DrawRectangle(x, y, 5, 5);
+        LCD.FillRectangle(x, y, 5, 5);
     } else {
-        return false;
+        // don't do anything now, we're not rendering this
     }
+    
 }
 
+class Enemies{
+    public:
+        Enemies();
+        void drawEnemies();
+        void shiftEnemies();
+    private:
+        Enemy enemiesArray[7][4];
+        Bullet firedBullets[7];
+        int totalEnemiesRemaining;
+        int x;
+        int y;
+        int width;
+        int height;
+};
+Enemies::Enemies(){
+    x = 0;
+    y = 30;
+    width = 8 + 35;
+    height = 4 + 20;
+}
+
+
+void Enemies::drawEnemies(){
+    int spacer1 = 0;
+    int spacer2 = 0;
+    for (int i = 0; i < 7; i++){
+        for (int k = 0; k < 4; k++){
+            enemiesArray[i][k].x = x + i * 5 + spacer1;
+            enemiesArray[i][k].y = x + k * 5 + spacer2;
+            enemiesArray[i][k].drawSelf();
+            spacer2 += 2;
+        }
+        spacer1 += 2;
+    } 
+  //LCD.DrawRectangle(x, y, width, height);  
+}
 
 class Player1
 {
@@ -75,28 +129,13 @@ void Player1::drawSelf(int x)
     {
         pos = 0;
     }
-    else if ((x > 310) | (x == 300))
+    else if ((x > 310) | (x == 310))
     {
-        pos = 310;
+        pos = 320;
     }
     LCD.DrawRectangle(pos, 220, 10, 10);
-    LCD.FillRectangle(pos, 220, 10, 10);
-    LCD.DrawCircle(bullet_pos, i, 1);
-
-    
+    LCD.FillRectangle(pos, 220, 10, 10);  
 }
-/*
-void Player1::shoot()
-{
-    bullet_pos = pos + 4;
-}
-*/
-void Player1::shoot2()
-{
-    bullet_pos = pos + 4;
-    
-}
-
 
 class Player2
 {
@@ -113,18 +152,31 @@ private:
 Player2::Player2(int *initLocation)
 {
 }
+void SaveDataToSD(){
 
+}
+void LoadAndCheckDataFromSD(){
+    
+}
+
+
+void playGameUI()
+{
+    //LCD.DrawRectangle(;)
+}
 
 void playGameScreen(int *returnVal)
 {
     float x, y;
-    float bulletY;
-    float bulletX;
+    //float bulletY;
+    //float bulletX;
     float time;
     time = TimeNow();
     float timeElapsed = 0;
     LCD.Clear();
     Player1 player;
+    Enemies e;
+    e.drawEnemies();
     // Put game logic here
     player.drawSelf(160);
     Bullet firedBullet(160, 100);
@@ -134,18 +186,20 @@ void playGameScreen(int *returnVal)
         if (LCD.Touch(&x, &y))
         {
             player.drawSelf(x);
+
         }
         timeElapsed = TimeNow() - time;
         if (timeElapsed > 0.0167) {
             LCD.Clear();
+            e.drawEnemies();
             player.drawSelf(x);
-            bulletY = bulletY - 2.67;
-            if (bulletY > 30){
-                firedBullet.drawSelf(bulletX, bulletY);
+            firedBullet.y = firedBullet.y - 3.67;
+            if (firedBullet.y > 30){
+                firedBullet.drawSelf(firedBullet.x, firedBullet.y);
             } else {
-                bulletY = 220;
-                bulletX = x;
-                firedBullet.drawSelf(bulletX, bulletY);
+                firedBullet.y = 220;
+                firedBullet.x = x;
+                firedBullet.drawSelf(firedBullet.x, firedBullet.y);
             }
             time = TimeNow();
         }
@@ -222,7 +276,12 @@ void instructScreen(int *returnVal)
             }
         }
     }
+    
+   
+   //Enemy enemies;
+ 
 }
+
 
 void loseScreen(int *returnVal)
 {
@@ -288,9 +347,6 @@ void startScreen(int *returnVal)
         LCD.DrawRectangle(10, 110, 310, 40);
         LCD.DrawRectangle(10, 150, 310, 40);
         LCD.DrawRectangle(10, 190, 310, 40);
-        //LCD.WriteAt("Welcome To Space-Invaders", 0, 0);
-        //LCD.DrawCircle(150,150, 30);
-        //LCD.WriteAt("Stats", 150, 150);
         LCD.WriteAt("Play Game", 10, 30);
         LCD.WriteAt("Statistics", 10, 70);
         LCD.WriteAt("Credits", 10, 110);
@@ -300,7 +356,6 @@ void startScreen(int *returnVal)
         {
             if (((x < 310) & (x > 10)) & ((y > 30) & (y < 70)))
             {
-                //LCD.WriteLine("Play Game Recorded");
                 LCD.Clear();
                 *returnVal = 0;
                 LCD.SetBackgroundColor(BLACK);
@@ -326,9 +381,7 @@ void startScreen(int *returnVal)
             {
                 *returnVal = 5;
                 break;
-            }
-            else
-            {
+            }else{
                 *returnVal = 4;
                 break;
             }
