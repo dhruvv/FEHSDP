@@ -15,6 +15,7 @@ class Bullet
         Bullet(int startX, int startY);
         void drawSelf(int, int);
         int x;
+
         int y;
     private:
         int startX;
@@ -84,6 +85,20 @@ Enemies::Enemies(){
     height = 28;
 }
 
+void Enemies::shiftEnemies(){
+    bool shift_Down = false;
+    if ((x + 49 != 299) & !shift_Down){
+        x += 25;
+    }
+    if ((x > 0) & shift_Down){
+        x -= 25;
+    }
+    if (x + 49 == 299 | x < 0){
+        y += 20;
+        shift_Down = true;
+    }
+    
+}
 
 void Enemies::drawEnemies(){
     //LCD.WriteLine("loop executed");
@@ -112,9 +127,8 @@ public:
     void shoot();
     void shoot2();
     int lives = 3;
-
-private:
     int pos = 140;
+private:
     int bullet_pos;
     char name[30];
     int points;
@@ -132,9 +146,9 @@ void Player1::drawSelf(int x)
     {
         pos = 0;
     }
-    else if ((x > 310) | (x == 310))
+    else if ((x > 300) | (x == 300))
     {
-        pos = 320;
+        pos = 300;
     }
     LCD.DrawRectangle(pos, 220, 10, 10);
     LCD.FillRectangle(pos, 220, 10, 10);  
@@ -174,8 +188,10 @@ void playGameScreen(int *returnVal)
     //float bulletY;
     //float bulletX;
     float time;
+    float time2 = 0;
     time = TimeNow();
     float timeElapsed = 0;
+    float time2Elapsed = 0;
     LCD.Clear();
     Player1 player;
     Enemies e;
@@ -189,8 +205,6 @@ void playGameScreen(int *returnVal)
         if (LCD.Touch(&x, &y))
         {
             player.drawSelf(x);
-            
-
         }
         timeElapsed = TimeNow() - time;
         if (timeElapsed > 0.0167) {
@@ -201,12 +215,17 @@ void playGameScreen(int *returnVal)
                 firedBullet.drawSelf(firedBullet.x, firedBullet.y);
             } else {
                 firedBullet.y = 220;
-                firedBullet.x = x;
+                firedBullet.x = player.pos;
                 firedBullet.drawSelf(firedBullet.x, firedBullet.y);
             }
             time = TimeNow();
             e.drawEnemies();
-
+        }
+        time2Elapsed = TimeNow() - time2;
+        if (time2Elapsed > 1.0){
+            e.shiftEnemies();
+            e.drawEnemies();
+            time2 = TimeNow();
         }
         if (player.lives == 0)
         {
