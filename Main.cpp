@@ -171,10 +171,10 @@ void Enemies::drawEnemies()
     int j = 0;
     int k = 0;
     int y_pos;
-    for (int i = 0; i < 4; i++)
+    for (int i = 0; i < 7; i++)
     {
         y_pos = i * 14;
-        for (k = 0; k < 7; k++)
+        for (k = 0; k < 4; k++)
         {
             enemiesArray[i][k].x = x + 17 * k;
             enemiesArray[i][k].y = y + y_pos;
