@@ -820,7 +820,7 @@ void difficultyScreen(int *returnValue, int *difficultySelector)
                 break;
             }
 
-            LCD.WriteLine("Screen reached");
+            //LCD.WriteLine("Screen reached");
         }
     }
 }
