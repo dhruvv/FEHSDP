@@ -187,12 +187,21 @@ public:
     //void updatePosition();
     void shoot();
     void shoot2();
+<<<<<<< HEAD
     int lives = 3;
     int score;
+=======
+    int lives;
+>>>>>>> e33cd9fd31a74a397552c62376f9c6973927680c
     int pos = 140;
+    int score;
 
 private:
     int bullet_pos;
+<<<<<<< HEAD
+=======
+    
+>>>>>>> e33cd9fd31a74a397552c62376f9c6973927680c
     char name[30];
     //int points;
     int i = 220;
@@ -201,6 +210,7 @@ private:
 Player1::Player1()
 {
     score = 0;
+    lives = 3;
 }
 void Player1::drawSelf(int x)
 {
@@ -241,12 +251,22 @@ void LoadAndCheckDataFromSD()
 {
 }
 
-void playGameUI()
+void playGameUI(Player1 *player)
 {
     LCD.DrawRectangle(0, 0, 320, 30);
     LCD.DrawRectangle(0, 30, 320, 200);
+<<<<<<< HEAD
     LCD.DrawRectangle(0, 0, 54, 25);
     LCD.WriteAt("Back", 2, 5);
+=======
+    LCD.DrawRectangle(0, 0, 60, 30);
+    LCD.WriteAt("Back", 0, 0);
+    LCD.WriteAt("LIVES: ", 60, 2);
+    LCD.WriteAt(("%f", player->lives), 130,2 );
+    LCD.WriteAt("Score: ", 200, 2);
+    LCD.WriteAt(("%f", player->score), 270, 2);
+    //LCD.WriteChar()
+>>>>>>> e33cd9fd31a74a397552c62376f9c6973927680c
 }
 
 void playGameScreen(int *returnVal)
@@ -263,7 +283,7 @@ void playGameScreen(int *returnVal)
     Player1 player;
     Enemies e;
     e.drawEnemies();
-    playGameUI();
+    playGameUI(&player);
     // Put game logic here
     player.drawSelf(160);
     Bullet firedBullet(160, 100);
@@ -299,7 +319,7 @@ void playGameScreen(int *returnVal)
             }
             time = TimeNow();
             e.drawEnemies();
-            playGameUI();
+            playGameUI(&player);
         }
         if (e.checkCollision(firedBullet))
         {
