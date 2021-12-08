@@ -104,11 +104,13 @@ bool Enemies::checkCollision(Bullet playerBullet){
                 if (!enemiesArray[i][k].toRender){
                     return false;
                 }else{
+                    /*
                     LCD.WriteAt(("%f", playerBullet.x), 100, 100);
                     LCD.WriteAt(("%f", enemiesArray[i][k].x), 100, 120);
                     LCD.WriteAt(("%f", playerBullet.y), 100, 140);
                     LCD.WriteAt(("%f", enemiesArray[i][k].y), 100, 160);
-                    Sleep(10.0);
+                    */
+                    //Sleep(10.0);
                     enemiesArray[i][k].toRender = false;
                     return true;
                 }
@@ -267,12 +269,9 @@ void playGameScreen(int *returnVal)
             firedBullet.y = firedBullet.y - 2.67;
             if (firedBullet.y > 30){
                 firedBullet.drawSelf(firedBullet.x, firedBullet.y);
-            } else if (e.checkCollision(firedBullet)) {
-                firedBullet.x = player.pos;
-                firedBullet.y = 220;
-                firedBullet.drawSelf(firedBullet.x, firedBullet.y);
+            }  
                 //LCD.WriteLine("Score update here");
-            } else {
+             else {
                 firedBullet.y = 220;
                 firedBullet.x = player.pos;
                 firedBullet.drawSelf(firedBullet.x, firedBullet.y);
@@ -281,12 +280,18 @@ void playGameScreen(int *returnVal)
             e.drawEnemies();
             playGameUI();
         }
+        if (e.checkCollision(firedBullet)) {
+            firedBullet.x = player.pos;
+            firedBullet.y = 220;
+            firedBullet.drawSelf(firedBullet.x, firedBullet.y);
+        }
         time2Elapsed = TimeNow() - time2;
         if (time2Elapsed > 2.0){
             e.shiftEnemies();
             e.drawEnemies();
             time2 = TimeNow();
         }
+
         if (player.lives == 0)
         {
             *returnVal = 6;
