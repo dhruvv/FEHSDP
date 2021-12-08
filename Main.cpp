@@ -1,8 +1,8 @@
 #include <FEHUtility.h>
 //#include <FEHIO.h>
 #include <FEHLCD.h>
-#include <FEHImages.h>
-//#include <SFML/Audio.h>
+//#include <FEHImages.h>
+#include "FEHImages.h"
 #include <math.h>
 #define left_bound 0
 #define right_bound 320
@@ -62,9 +62,12 @@ void Enemy::drawSelf()
 {
     if (toRender)
     {
-        LCD.SetFontColor(WHITE);
-        LCD.DrawRectangle(x, y, box_size, box_size);
-        LCD.FillRectangle(x, y, box_size, box_size);
+        FEHIMAGE invader;
+        invader.Open("SpaceInvaderFEH.pic");
+        invader.Draw(x, y);
+        //LCD.SetFontColor(WHITE);
+        //LCD.DrawRectangle(x, y, box_size, box_size);
+        //LCD.FillRectangle(x, y, box_size, box_size);
     }
     else
     {
@@ -170,10 +173,10 @@ void Enemies::drawEnemies()
     int y_pos;
     for (int i = 0; i < 4; i++)
     {
-        y_pos = i * 7;
+        y_pos = i * 14;
         for (k = 0; k < 7; k++)
         {
-            enemiesArray[i][k].x = x + 7 * k;
+            enemiesArray[i][k].x = x + 17 * k;
             enemiesArray[i][k].y = y + y_pos;
             enemiesArray[i][k].drawSelf();
         }
