@@ -4,30 +4,11 @@
 //#include <FEHImages.h>
 #include "FEHImages.h"
 #include <math.h>
+#include <FEHRandom.h>
 #define left_bound 0
 #define right_bound 320
 #define top_bound 0
 #define bottom_bound 240
-
-class Player1
-{
-public:
-    Player1();
-    void drawSelf(int);
-    //void updatePosition();
-    void shoot();
-    void shoot2();
-    int lives = 3;
-    int pos = 140;
-    int score;
-
-private:
-    int bullet_pos;
-    char name[30];
-    //int points;
-    int i = 220;
-    int x_coordinate;
-};
 
 class Bullet
 {
@@ -99,14 +80,16 @@ public:
     Enemies();
     void drawEnemies();
     void shiftEnemies();
-    void shoot();
-    bool checkCollision(Bullet, Player1 *);
-    int num_enemiesx;
-    int num_enemiesy;
+    void shoot(int, int);
+    bool checkCollisionWithFloor();
+    bool checkCollision(Bullet);
+    int num_enemiesx = 11;
+    int num_enemiesy = 7;
+    Enemy enemiesArray[11][7];
+    Bullet enemyBullet;
 
 private:
-    Enemy enemiesArray[11][7];
-    Bullet firedBullets[7];
+    //Bullet firedBullets;
     int totalEnemiesRemaining;
     int x;
     int y;
@@ -122,24 +105,96 @@ Enemies::Enemies()
     height = 51;
     shift_Down = false;
 }
+/*
+bool Enemies::hasWon(&player)
+{
+    if (player.points == 530){
 
-bool Enemies::checkCollision(Bullet playerBullet, Player1 *player)
+        return true;
+    }
+    
+    int i = 0;
+    int k = 0;
+    int checkVal = num_enemiesy * num_enemiesx;
+    int sum = 0;
+    for (i = 0; i < num_enemiesx; i++)
+    {
+        for (k = 0; k < num_enemiesy; k++)
+        {
+            if (!enemiesArray[i][k].toRender)
+            {
+                sum += 1;
+            }
+            if (checkVal == sum)
+            {
+                return true;
+            }
+        }
+    }
+    
+    return false;
+}
+*/
+void Enemies::shoot(int playerX, int playerY)
 {
     int i = 0;
     int k = 0;
-    int num_enemiesx = 11;
-    int num_enemiesy = 7;
+    int count = 0;
+    int randomNumber;
+    Enemy existingEnemies[11];
     for (i = 0; i < 11; i++)
     {
-        for (k = 0; k < 7; k++)
+        if (enemiesArray[i][k].toRender)
+        {
+            existingEnemies[count] = enemiesArray[i][k];
+            count++;
+        }
+    }
+    randomNumber = (Random.RandInt() / 32767.0) * 11;
+    LCD.WriteLine(randomNumber);
+    //Sleep(10.0);
+    //int offset = playerX + count;
+    enemyBullet.x = enemiesArray[randomNumber][0].x;
+    enemyBullet.y = enemiesArray[randomNumber][0].y;
+    enemyBullet.drawSelf(enemyBullet.x, enemyBullet.x);
+}
+
+bool Enemies::checkCollisionWithFloor()
+{
+    int i = 0;
+    int k = 0;
+    for (i = 0; i < num_enemiesx; i++)
+    {
+        for (k = 0; k < num_enemiesy; k++)
+        {
+            if (enemiesArray[i][k].y >= 220)
+            {
+                if (!enemiesArray[i][k].toRender)
+                {
+                    return false;
+                }
+                else
+                {
+                    return true;
+                }
+            }
+        }
+    }
+    return false;
+}
+bool Enemies::checkCollision(Bullet playerBullet)
+{
+    int i = 0;
+    int k = 0;
+    for (i = 0; i < num_enemiesx; i++)
+    {
+        for (k = 0; k < num_enemiesy; k++)
         {
             if (((abs(playerBullet.x - (enemiesArray[i][k].x)) <= 13) & ((abs(playerBullet.y - enemiesArray[i][k].y) <= 13))))
             {
                 if (!enemiesArray[i][k].toRender)
                 {
                     return false;
-                    player->score = player->score + 10;
-                    LCD.WriteLine(player->score);
                 }
                 else
                 {
@@ -195,7 +250,56 @@ void Enemies::drawEnemies()
         }
     }
 }
+class Player1
+{
+public:
+    Player1();
+    void drawSelf(int);
+    bool enemyCollision(Enemies *e);
+    bool hasWon();
+    //void updatePosition();
+    int lives = 3;
+    int pos = 140;
+    int score;
 
+private:
+    int bullet_pos;
+    char name[30];
+    //int points;
+    int i = 220;
+    int x_coordinate;
+};
+
+bool Player1::hasWon()
+{
+    if (score == 530)
+    {
+        return true;
+    }
+    return false;
+}
+
+bool Player1::enemyCollision(Enemies *e)
+{
+    int i = 0;
+    int k = 0;
+    for (i = 0; i < e->num_enemiesx; i++)
+    {
+
+        for (k = 0; k < e->num_enemiesy; k++)
+        {
+            if ((e->enemiesArray[i][k].toRender) & (e->enemiesArray[i][k].y > 220))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+    }
+    return false;
+}
 Player1::Player1()
 {
     score = 0;
@@ -293,6 +397,7 @@ void playGameScreen(int *returnVal)
             LCD.Clear();
             player.drawSelf(x);
             firedBullet.y = firedBullet.y - 2.67;
+            e.enemyBullet.y = e.enemyBullet.y + 2.67;
             if (firedBullet.y > 30)
             {
                 firedBullet.drawSelf(firedBullet.x, firedBullet.y);
@@ -303,6 +408,12 @@ void playGameScreen(int *returnVal)
                 firedBullet.y = 220;
                 firedBullet.x = player.pos;
                 firedBullet.drawSelf(firedBullet.x, firedBullet.y);
+            }
+            if (e.enemyBullet.y < 220)
+            {
+                LCD.SetFontColor(RED);
+                e.enemyBullet.drawSelf(e.enemyBullet.x, e.enemyBullet.y);
+                LCD.SetFontColor(WHITE);
             }
             time = TimeNow();
             e.drawEnemies();
@@ -315,8 +426,9 @@ void playGameScreen(int *returnVal)
             e.shiftEnemies();
             e.drawEnemies();
             time2 = TimeNow();
+            e.shoot(player.pos, 220);
         }
-        if (e.checkCollision(firedBullet, &player))
+        if (e.checkCollision(firedBullet))
         {
             firedBullet.x = player.pos;
             firedBullet.y = 220;
@@ -324,8 +436,17 @@ void playGameScreen(int *returnVal)
             player.score += 10;
             playGameUI(&player);
         }
-
-        if (player.lives == 0)
+        if (player.enemyCollision(&e))
+        {
+            player.lives -= 1;
+            playGameUI(&player);
+        }
+        if (player.hasWon())
+        {
+            *returnVal = 7;
+            break;
+        }
+        if (e.checkCollisionWithFloor())
         {
             *returnVal = 6;
             break;
@@ -404,49 +525,57 @@ void instructScreen(int *returnVal)
 
 void loseScreen(int *returnVal)
 {
-
-    float x, y;
-    LCD.Clear();
-    LCD.WriteAt("*You Lose*", 80, 10);
-    LCD.WriteAt(("Points: 20"), 20, 40);
-    LCD.DrawRectangle(100, 120, 60, 20);
-    LCD.WriteAt("Replay", 105, 121);
-    LCD.DrawRectangle(100, 150, 60, 20);
-    LCD.WriteAt("Main Menu", 105, 151);
-    if (LCD.Touch(&x, &y))
+    while (true)
     {
-        if (((x > 100) & (x < 160)) & ((y > 120) & (y < 140)))
+        float x, y;
+        LCD.Clear();
+        LCD.WriteAt("*You Lose*", 85, 10);
+        LCD.WriteAt(("Points: 20"), 85, 40);
+        LCD.DrawRectangle(100, 120, 85, 20);
+        LCD.WriteAt("Replay", 105, 121);
+        LCD.DrawRectangle(100, 150, 130, 20);
+        LCD.WriteAt("Main Menu", 105, 151);
+        if (LCD.Touch(&x, &y))
         {
-            *returnVal = 0;
-        }
-        if (((x > 100) & (x < 160)) & ((y > 150) & (y < 170)))
-        {
-            *returnVal = 4;
+            if (((x > 100) & (x < 160)) & ((y > 120) & (y < 140)))
+            {
+                *returnVal = 0;
+                break;
+            }
+            if (((x > 100) & (x < 160)) & ((y > 150) & (y < 170)))
+            {
+                *returnVal = 4;
+                break;
+            }
         }
     }
 }
 
 void winScreen(int *returnVal)
 {
-
-    float x, y;
-    LCD.Clear();
-    LCD.WriteAt("*You Win*", 80, 10);
-    LCD.WriteAt("High Score: ", 20, 190);
-    LCD.WriteAt(("Points: 20"), 20, 40);
-    LCD.DrawRectangle(100, 120, 60, 20);
-    LCD.WriteAt("Replay", 105, 121);
-    LCD.DrawRectangle(100, 150, 60, 20);
-    LCD.WriteAt("Main Menu", 105, 151);
-    if (LCD.Touch(&x, &y))
+    while (true)
     {
-        if (((x > 100) & (x < 160)) & ((y > 120) & (y < 140)))
+        float x, y;
+        LCD.Clear();
+        LCD.WriteAt("*You Win*", 90, 10);
+        LCD.WriteAt("High Score: ", 60, 190);
+        LCD.WriteAt(("Points:"), 85, 40);
+        LCD.DrawRectangle(100, 120, 85, 20);
+        LCD.WriteAt("Replay", 105, 121);
+        LCD.DrawRectangle(100, 150, 130, 20);
+        LCD.WriteAt("Main Menu", 105, 151);
+        if (LCD.Touch(&x, &y))
         {
-            *returnVal = 0;
-        }
-        if (((x > 100) & (x < 160)) & ((y > 150) & (y < 170)))
-        {
-            *returnVal = 4;
+            if (((x > 100) & (x < 160)) & ((y > 120) & (y < 140)))
+            {
+                *returnVal = 0;
+                break;
+            }
+            if (((x > 100) & (x < 160)) & ((y > 150) & (y < 170)))
+            {
+                *returnVal = 4;
+                break;
+            }
         }
     }
 }
@@ -544,6 +673,10 @@ int main()
             break;
         case 6:
             loseScreen(&returnValue);
+            Sleep(.1);
+            break;
+        case 7:
+            winScreen(&returnValue);
             Sleep(.1);
             break;
         }
