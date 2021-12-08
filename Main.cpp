@@ -9,6 +9,7 @@
 #define right_bound 320
 #define top_bound 0
 #define bottom_bound 240
+//#define ARR_SIZE(arr) ( sizeof((arr)) / sizeof((arr[0])) )
 
 class Bullet
 {
@@ -83,6 +84,7 @@ public:
     void shoot(int, int);
     bool checkCollisionWithFloor();
     bool checkCollision(Bullet);
+    bool checkPlayerCollision(int, int);
     int num_enemiesx = 11;
     int num_enemiesy = 7;
     Enemy enemiesArray[11][7];
@@ -105,59 +107,46 @@ Enemies::Enemies()
     height = 51;
     shift_Down = false;
 }
-/*
-bool Enemies::hasWon(&player)
-{
-    if (player.points == 530){
 
-        return true;
-    }
-    
-    int i = 0;
-    int k = 0;
-    int checkVal = num_enemiesy * num_enemiesx;
-    int sum = 0;
-    for (i = 0; i < num_enemiesx; i++)
-    {
-        for (k = 0; k < num_enemiesy; k++)
-        {
-            if (!enemiesArray[i][k].toRender)
-            {
-                sum += 1;
-            }
-            if (checkVal == sum)
-            {
-                return true;
-            }
-        }
-    }
-    
-    return false;
-}
-*/
 void Enemies::shoot(int playerX, int playerY)
 {
     int i = 0;
     int k = 0;
     int count = 0;
     int randomNumber;
-    Enemy existingEnemies[11];
-    for (i = 0; i < 11; i++)
+    int coordinates[11][2];
+    for (i = 0; i < 11; i+= 2)
     {
         if (enemiesArray[i][k].toRender)
         {
-            existingEnemies[count] = enemiesArray[i][k];
+            coordinates[count][0] = enemiesArray[i][k].x;
+            coordinates[count][1] = enemiesArray[i][k].y;
             count++;
         }
     }
-    randomNumber = (Random.RandInt() / 32767.0) * 11;
-    LCD.WriteLine(randomNumber);
-    //Sleep(10.0);
-    //int offset = playerX + count;
-    enemyBullet.x = enemiesArray[randomNumber][0].x;
-    enemyBullet.y = enemiesArray[randomNumber][0].y;
-    enemyBullet.drawSelf(enemyBullet.x, enemyBullet.x);
+    if (count != 0) {
+        randomNumber = Random.RandInt() % count;
+        LCD.WriteLine(randomNumber);
+        //Sleep(10.0);
+        //int offset = playerX + count;
+        enemyBullet.x = coordinates[randomNumber][0];
+        enemyBullet.y = coordinates[randomNumber][1];
+        enemyBullet.drawSelf(enemyBullet.x, enemyBullet.y);
+    }
+
 }
+
+bool Enemies::checkPlayerCollision(int playerX, int playerY){
+    if ((enemyBullet.y == 220) & (abs(enemyBullet.x - playerX) <=10)){
+        Sleep(0.1);
+        //enemyBullet.drawSelf(239,239);
+        return true;
+    } else {
+        return false;
+    }
+}
+
+
 
 bool Enemies::checkCollisionWithFloor()
 {
@@ -322,28 +311,6 @@ void Player1::drawSelf(int x)
     ship.Draw(220, pos);
 }
 
-class Player2
-{
-public:
-    Player2(int *initLocation);
-    void drawSelf();
-
-private:
-    int points;
-    int lives;
-    int x_coordinate;
-};
-
-Player2::Player2(int *initLocation)
-{
-}
-void SaveDataToSD()
-{
-}
-void LoadAndCheckDataFromSD()
-{
-}
-
 void playGameUI(Player1 *player)
 {
 
@@ -380,7 +347,6 @@ void playGameScreen(int *returnVal)
     Bullet firedBullet(160, 100);
     while (1)
     {
-
         timeElapsed = TimeNow() - time;
         if (LCD.Touch(&x, &y))
         {
@@ -436,11 +402,19 @@ void playGameScreen(int *returnVal)
             player.score += 10;
             playGameUI(&player);
         }
+        if (e.checkPlayerCollision(player.pos, 220)){
+            player.lives =- 1;
+            //Sleep(0.2);
+            e.shoot(player.pos, 220);
+            e.enemyBullet.drawSelf(e.enemyBullet.x,e.enemyBullet.y);
+            LCD.WriteLine("Life lost");
+        }
+        /*
         if (player.enemyCollision(&e))
         {
             player.lives -= 1;
             playGameUI(&player);
-        }
+        }*/
         if (player.hasWon())
         {
             *returnVal = 7;
@@ -590,16 +564,19 @@ void startScreen(int *returnVal)
         LCD.SetFontColor(RED);
         LCD.WriteAt("*Space Invaders*", 70, 10);
         LCD.SetFontColor(BURLYWOOD);
-        LCD.DrawRectangle(10, 30, 300, 40);
-        LCD.DrawRectangle(10, 70, 300, 40);
-        LCD.DrawRectangle(10, 110, 300, 40);
-        LCD.DrawRectangle(10, 150, 300, 40);
-        LCD.DrawRectangle(10, 190, 300, 40);
+        LCD.DrawRectangle(10, 30, 150, 40);
+        LCD.DrawRectangle(10, 70, 150, 40);
+        LCD.DrawRectangle(10, 110, 150, 40);
+        LCD.DrawRectangle(10, 150, 150, 40);
+        LCD.DrawRectangle(10, 190, 150, 40);
         LCD.WriteAt("Play Game", 10, 32);
         LCD.WriteAt("Statistics", 10, 72);
         LCD.WriteAt("Credits", 10, 112);
         LCD.WriteAt("Exit", 10, 152);
         LCD.WriteAt("Instructions", 10, 192);
+        FEHIMAGE ship2;
+        ship2.Open("SpaceShip21FEH.pic");
+        ship2.Draw(75, 180);
         if (LCD.Touch(&x, &y))
         {
             if (((x < 300) & (x > 10)) & ((y > 30) & (y < 70)))
@@ -609,23 +586,23 @@ void startScreen(int *returnVal)
                 LCD.SetBackgroundColor(BLACK);
                 break;
             }
-            if (((x < 300) & (x > 10)) & ((y > 70) & (y < 110)))
+            if (((x < 150) & (x > 10)) & ((y > 70) & (y < 110)))
             {
                 *returnVal = 1;
                 break;
             }
-            if (((x < 300) & (x > 10)) & ((y > 110) & (y < 150)))
+            if (((x < 150) & (x > 10)) & ((y > 110) & (y < 150)))
             {
                 *returnVal = 2;
                 LCD.SetBackgroundColor(BLACK);
                 break;
             }
-            if (((x < 300) & (x > 10)) & ((y > 150) & (y < 190)))
+            if (((x < 150) & (x > 10)) & ((y > 150) & (y < 190)))
             {
                 *returnVal = 3;
                 break;
             }
-            if (((x < 300) & (x > 10)) & ((y > 190) & (y < 230)))
+            if (((x < 150) & (x > 10)) & ((y > 190) & (y < 230)))
             {
                 *returnVal = 5;
                 break;
