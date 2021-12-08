@@ -62,17 +62,13 @@ void Enemy::drawSelf()
     if (toRender)
     {
         FEHIMAGE invader;
-        invader.Open("SpaceInvaderFEH.pic");
+        invader.Open("Invader2FEH.pic");
         invader.Draw(y, x);
-        //LCD.SetFontColor(WHITE);
-        //LCD.DrawRectangle(x, y, box_size, box_size);
-        //LCD.FillRectangle(x, y, box_size, box_size);
     }
     else
     {
         LCD.SetFontColor(WHITE);
-        //LCD.DrawRectangle(x, y, 5, 5);
-        //LCD.FillRectangle(x, y, 5, 5);
+        //deletes enemy when it's been hit
         // don't do anything now, we're not rendering this
     }
 }
@@ -99,8 +95,8 @@ Enemies::Enemies()
 {
     x = 0;
     y = 30;
-    width = 49;
-    height = 28;
+    width = 114;
+    height = 51;
     shift_Down = false;
 }
 
@@ -192,11 +188,11 @@ public:
     void shoot();
     void shoot2();
     int lives = 3;
+    int score;
     int pos = 140;
 
 private:
     int bullet_pos;
-    int score;
     char name[30];
     //int points;
     int i = 220;
@@ -249,9 +245,8 @@ void playGameUI()
 {
     LCD.DrawRectangle(0, 0, 320, 30);
     LCD.DrawRectangle(0, 30, 320, 200);
-    LCD.DrawRectangle(0, 0, 60, 30);
-    LCD.WriteAt("Back", 0, 0);
-    //for (int i = )
+    LCD.DrawRectangle(0, 0, 54, 25);
+    LCD.WriteAt("Back", 2, 5);
 }
 
 void playGameScreen(int *returnVal)
@@ -274,6 +269,7 @@ void playGameScreen(int *returnVal)
     Bullet firedBullet(160, 100);
     while (1)
     {
+
         timeElapsed = TimeNow() - time;
         if (LCD.Touch(&x, &y))
         {
@@ -334,7 +330,7 @@ void statScreen(int *returnVal)
     {
         LCD.DrawRectangle(10, 10, 200, 200);
         LCD.WriteAt("Statistics", 100, 10);
-        LCD.WriteAt("Lives: 3", 20, 50);
+        LCD.WriteAt(("Lives: 3"), 20, 50);
         LCD.WriteAt("Points: 42", 20, 80);
         LCD.DrawRectangle(10, 10, 60, 25);
         LCD.WriteAt("Back", 10, 10);
@@ -451,46 +447,48 @@ void startScreen(int *returnVal)
     float x, y;
     while (1)
     {
-        LCD.SetBackgroundColor(GRAY);
-        LCD.SetFontColor(RED);
-        LCD.WriteAt("*Space Invaders*", 75, 10);
         LCD.SetFontColor(WHITE);
-        LCD.DrawRectangle(10, 30, 310, 40);
-        LCD.DrawRectangle(10, 70, 310, 40);
-        LCD.DrawRectangle(10, 110, 310, 40);
-        LCD.DrawRectangle(10, 150, 310, 40);
-        LCD.DrawRectangle(10, 190, 310, 40);
-        LCD.WriteAt("Play Game", 10, 30);
-        LCD.WriteAt("Statistics", 10, 70);
-        LCD.WriteAt("Credits", 10, 110);
-        LCD.WriteAt("Exit", 10, 150);
-        LCD.WriteAt("Instructions", 10, 190);
+        LCD.DrawRectangle(0, 0, 320, 240);
+        LCD.FillRectangle(0, 0, 320, 320);
+        LCD.SetFontColor(RED);
+        LCD.WriteAt("*Space Invaders*", 70, 10);
+        LCD.SetFontColor(BURLYWOOD);
+        LCD.DrawRectangle(10, 30, 300, 40);
+        LCD.DrawRectangle(10, 70, 300, 40);
+        LCD.DrawRectangle(10, 110, 300, 40);
+        LCD.DrawRectangle(10, 150, 300, 40);
+        LCD.DrawRectangle(10, 190, 300, 40);
+        LCD.WriteAt("Play Game", 10, 32);
+        LCD.WriteAt("Statistics", 10, 72);
+        LCD.WriteAt("Credits", 10, 112);
+        LCD.WriteAt("Exit", 10, 152);
+        LCD.WriteAt("Instructions", 10, 192);
         if (LCD.Touch(&x, &y))
         {
-            if (((x < 310) & (x > 10)) & ((y > 30) & (y < 70)))
+            if (((x < 300) & (x > 10)) & ((y > 30) & (y < 70)))
             {
                 LCD.Clear();
                 *returnVal = 0;
                 LCD.SetBackgroundColor(BLACK);
                 break;
             }
-            if (((x < 310) & (x > 10)) & ((y > 70) & (y < 110)))
+            if (((x < 300) & (x > 10)) & ((y > 70) & (y < 110)))
             {
                 *returnVal = 1;
                 break;
             }
-            if (((x < 310) & (x > 10)) & ((y > 110) & (y < 150)))
+            if (((x < 300) & (x > 10)) & ((y > 110) & (y < 150)))
             {
                 *returnVal = 2;
                 LCD.SetBackgroundColor(BLACK);
                 break;
             }
-            if (((x < 310) & (x > 10)) & ((y > 150) & (y < 190)))
+            if (((x < 300) & (x > 10)) & ((y > 150) & (y < 190)))
             {
                 *returnVal = 3;
                 break;
             }
-            if (((x < 310) & (x > 10)) & ((y > 190) & (y < 230)))
+            if (((x < 300) & (x > 10)) & ((y > 190) & (y < 230)))
             {
                 *returnVal = 5;
                 break;
