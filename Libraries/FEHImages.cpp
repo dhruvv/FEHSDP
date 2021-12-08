@@ -4,23 +4,23 @@
 
 FEHIMAGE::FEHIMAGE()
 {
-	for(int i=0; i<240; i++)
+	for (int i = 0; i < 240; i++)
 	{
-		for(int j=0; j<320; j++)
-			saved_image[i][j]=0;
+		for (int j = 0; j < 320; j++)
+			saved_image[i][j] = 0;
 	}
 }
 
-void FEHIMAGE::Open(const char * filename)
+void FEHIMAGE::Open(const char *filename)
 {
 
 	std::ifstream pic;
 	pic.open(filename);
-	pic>>rows>>cols;
-	for(int i=0; i<rows; i++)
+	pic >> rows >> cols;
+	for (int i = 0; i < rows; i++)
 	{
-		for(int j=0; j<cols; j++)
-			pic>>saved_image[i][j];	
+		for (int j = 0; j < cols; j++)
+			pic >> saved_image[i][j];
 	}
 	pic.close();
 }
@@ -29,16 +29,15 @@ void FEHIMAGE::Open(const char * filename)
 //x,y are top left location of where to draw picture
 void FEHIMAGE::Draw(int x, int y)
 {
-	for(int i=0; i<rows; i++)
+	for (int i = 0; i < rows; i++)
 	{
-		for(int j=0; j<cols; j++)
+		for (int j = 0; j < cols; j++)
 		{
-			if(saved_image[i][j]!=-1)
+			if (saved_image[i][j] != -1)
 			{
 				LCD.SetFontColor(saved_image[i][j]);
-				LCD.DrawPixel(j+y,i+x);
+				LCD.DrawPixel(j + y, i + x);
 			}
 		}
 	}
-
 }
