@@ -9,6 +9,26 @@
 #define top_bound 0
 #define bottom_bound 240
 
+class Player1
+{
+public:
+    Player1();
+    void drawSelf(int);
+    //void updatePosition();
+    void shoot();
+    void shoot2();
+    int lives = 3;
+    int pos = 140;
+    int score;
+
+private:
+    int bullet_pos;
+    char name[30];
+    //int points;
+    int i = 220;
+    int x_coordinate;
+};
+
 class Bullet
 {
 public:
@@ -79,10 +99,12 @@ public:
     Enemies();
     void drawEnemies();
     void shiftEnemies();
-    bool checkCollision(Bullet);
+    bool checkCollision(Bullet, Player1 *);
+    int num_enemiesx;
+    int num_enemiesy;
 
 private:
-    Enemy enemiesArray[7][4];
+    Enemy enemiesArray[11][7];
     Bullet firedBullets[7];
     int totalEnemiesRemaining;
     int x;
@@ -100,29 +122,26 @@ Enemies::Enemies()
     shift_Down = false;
 }
 
-bool Enemies::checkCollision(Bullet playerBullet)
+bool Enemies::checkCollision(Bullet playerBullet, Player1 *player)
 {
     int i = 0;
     int k = 0;
-    for (i = 6; i > -1; i--)
+    int num_enemiesx = 11;
+    int num_enemiesy = 7;
+    for (i = num_enemiesx; i > -1; i--)
     {
-        for (k = 3; k > -1; k--)
+        for (k = num_enemiesy; k > -1; k--)
         {
             if (((abs(playerBullet.x - (enemiesArray[i][k].x)) <= 13) & ((abs(playerBullet.y - enemiesArray[i][k].y) <= 13))))
             {
                 if (!enemiesArray[i][k].toRender)
                 {
                     return false;
+                    player->score = player->score + 10;
+                    LCD.WriteLine(player->score);
                 }
                 else
                 {
-                    /*
-                    LCD.WriteAt(("%f", playerBullet.x), 100, 100);
-                    LCD.WriteAt(("%f", enemiesArray[i][k].x), 100, 120);
-                    LCD.WriteAt(("%f", playerBullet.y), 100, 140);
-                    LCD.WriteAt(("%f", enemiesArray[i][k].y), 100, 160);
-                    */
-                    //Sleep(10.0);
                     enemiesArray[i][k].toRender = false;
                     return true;
                 }
@@ -134,20 +153,20 @@ bool Enemies::checkCollision(Bullet playerBullet)
 
 void Enemies::shiftEnemies()
 {
-    if ((x + 126 != 301) & !shift_Down)
+    if ((x + 182 != 302) & !shift_Down)
     {
-        x += 25;
+        x += 20;
         shift_Down = false;
     }
     if ((x > 0) & shift_Down)
     {
-        x -= 25;
+        x -= 20;
         if (x == 0)
         {
             shift_Down = false;
         }
     }
-    if (x + 126 == 301)
+    if (x + 182 == 302)
     {
         y += 20;
         shift_Down = true;
@@ -161,52 +180,21 @@ void Enemies::shiftEnemies()
 
 void Enemies::drawEnemies()
 {
-    //LCD.WriteLine("loop executed");
-    LCD.DrawRectangle(x, y, width, height);
     int j = 0;
     int k = 0;
     int y_pos;
-    for (int i = 0; i < 4; i++)
+    for (int i = 0; i < 7; i++)
     {
         y_pos = i * 14;
-        for (k = 0; k < 7; k++)
+        for (k = 0; k < 11; k++)
         {
             enemiesArray[i][k].x = x + 17 * k;
             enemiesArray[i][k].y = y + y_pos;
             enemiesArray[i][k].drawSelf();
         }
     }
-    //LCD.DrawRectangle(x, y, width, height);
 }
 
-class Player1
-{
-public:
-    Player1();
-    void drawSelf(int);
-    //void updatePosition();
-    void shoot();
-    void shoot2();
-<<<<<<< HEAD
-    int lives = 3;
-    int score;
-=======
-    int lives;
->>>>>>> e33cd9fd31a74a397552c62376f9c6973927680c
-    int pos = 140;
-    int score;
-
-private:
-    int bullet_pos;
-<<<<<<< HEAD
-=======
-    
->>>>>>> e33cd9fd31a74a397552c62376f9c6973927680c
-    char name[30];
-    //int points;
-    int i = 220;
-    int x_coordinate;
-};
 Player1::Player1()
 {
     score = 0;
@@ -253,20 +241,19 @@ void LoadAndCheckDataFromSD()
 
 void playGameUI(Player1 *player)
 {
+
     LCD.DrawRectangle(0, 0, 320, 30);
     LCD.DrawRectangle(0, 30, 320, 200);
-<<<<<<< HEAD
-    LCD.DrawRectangle(0, 0, 54, 25);
-    LCD.WriteAt("Back", 2, 5);
-=======
     LCD.DrawRectangle(0, 0, 60, 30);
-    LCD.WriteAt("Back", 0, 0);
-    LCD.WriteAt("LIVES: ", 60, 2);
-    LCD.WriteAt(("%f", player->lives), 130,2 );
-    LCD.WriteAt("Score: ", 200, 2);
-    LCD.WriteAt(("%f", player->score), 270, 2);
+    LCD.SetFontColor(RED);
+    LCD.FillRectangle(0, 0, 60, 30);
+    LCD.SetFontColor(WHITE);
+    LCD.WriteAt("Back", 2, 6);
+    LCD.WriteAt("Lives: ", 60, 6);
+    LCD.WriteAt(("%f", player->lives), 130, 6);
+    LCD.WriteAt("Score: ", 200, 6);
+    LCD.WriteAt(("%f", player->score), 270, 6);
     //LCD.WriteChar()
->>>>>>> e33cd9fd31a74a397552c62376f9c6973927680c
 }
 
 void playGameScreen(int *returnVal)
@@ -321,7 +308,7 @@ void playGameScreen(int *returnVal)
             e.drawEnemies();
             playGameUI(&player);
         }
-        if (e.checkCollision(firedBullet))
+        if (e.checkCollision(firedBullet, &player))
         {
             firedBullet.x = player.pos;
             firedBullet.y = 220;
