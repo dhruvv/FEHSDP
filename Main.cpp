@@ -151,11 +151,12 @@ void Enemies::shoot(int playerX, int playerY)
         }
     }
     randomNumber = (Random.RandInt() / 32767.0) * 11;
-    LCD.WriteLine(randomNumber);
+    //LCD.WriteLine(randomNumber);
     //Sleep(10.0);
     //int offset = playerX + count;
     enemyBullet.x = enemiesArray[randomNumber][0].x;
     enemyBullet.y = enemiesArray[randomNumber][0].y;
+    LCD.WriteLine(enemyBullet.x);
     enemyBullet.drawSelf(enemyBullet.x, enemyBullet.x);
 }
 
