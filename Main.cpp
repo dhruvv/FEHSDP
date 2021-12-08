@@ -219,8 +219,9 @@ void Player1::drawSelf(int x)
     {
         pos = 300;
     }
-    LCD.DrawRectangle(pos, 220, 10, 10);
-    LCD.FillRectangle(pos, 220, 10, 10);
+    FEHIMAGE ship;
+    ship.Open("SpaceShipFEH.pic");
+    ship.Draw(220, pos);
 }
 
 class Player2
