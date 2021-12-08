@@ -148,13 +148,13 @@ void Enemies::shoot(int playerX, int playerY)
             count++;
         }
     }
-    if (count != 0) {
+    if (count != 0)
+    {
         randomNumber = Random.RandInt() % count;
         enemyBullet.x = coordinates[randomNumber][0];
         enemyBullet.y = coordinates[randomNumber][1];
         enemyBullet.drawSelf(enemyBullet.x, enemyBullet.y);
     }
-
 }
 
 //First collision detection software
@@ -164,7 +164,9 @@ bool Enemies::checkPlayerCollision(int playerX, int playerY){
     if ((abs(enemyBullet.y - playerY) <= 10) & (abs(enemyBullet.x - playerX) <= 10 )){
         this->shoot(220,220);
         return true;
-    } else {
+    }
+    else
+    {
         return false;
     }
 }
