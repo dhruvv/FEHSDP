@@ -12,7 +12,6 @@
 #define bottom_bound 240
 //#define ARR_SIZE(arr) ( sizeof((arr)) / sizeof((arr[0])) )
 
-
 //Define the Class Bullet
 class Bullet
 {
@@ -28,7 +27,7 @@ private:
     int startY;
 };
 
-//Create the Bullet constructor and pass in the starting coordinates 
+//Create the Bullet constructor and pass in the starting coordinates
 Bullet::Bullet(int startX, int startY)
 {
     x = startX;
@@ -53,7 +52,7 @@ private:
     int type;
 
 public:
-//initialize all the pulbic data in the the enemy class
+    //initialize all the pulbic data in the the enemy class
     Enemy();
     int x;
     int y;
@@ -74,7 +73,7 @@ Enemy::Enemy()
 //Define the drawself function of the enemy class
 void Enemy::drawSelf()
 {
-    //checks to see if it has been set to not render 
+    //checks to see if it has been set to not render
     //if its set to render, this check passes
     if (toRender)
     {
@@ -92,7 +91,7 @@ void Enemy::drawSelf()
 }
 
 //Creates the class Enemies, that stores and array of Enemy
-//Collision handeling and random functions are used here 
+//Collision handeling and random functions are used here
 class Enemies
 {
 public:
@@ -118,7 +117,7 @@ private:
     bool shift_Down;
 };
 
-//Enemies constructor 
+//Enemies constructor
 Enemies::Enemies()
 {
     x = 0;
@@ -160,9 +159,11 @@ void Enemies::shoot(int playerX, int playerY)
 //First collision detection software
 //Checks if an enemy bullet has collided with the player
 //returns true if it has
-bool Enemies::checkPlayerCollision(int playerX, int playerY){
-    if ((abs(enemyBullet.y - playerY) <= 10) & (abs(enemyBullet.x - playerX) <= 10 )){
-        this->shoot(220,220);
+bool Enemies::checkPlayerCollision(int playerX, int playerY)
+{
+    if ((abs(enemyBullet.y - playerY) <= 10) & (abs(enemyBullet.x - playerX) <= 10))
+    {
+        this->shoot(220, 220);
         return true;
     }
     else
@@ -171,14 +172,14 @@ bool Enemies::checkPlayerCollision(int playerX, int playerY){
     }
 }
 
-//Collision function 2 
+//Collision function 2
 //Checks if the enemies pass the "floor" @ y = 220
 //This immediately cancles gameplay
 bool Enemies::checkCollisionWithFloor()
 {
     int i = 0;
     int k = 0;
-    //iterates through the enemies list to check position of each individual enemy 
+    //iterates through the enemies list to check position of each individual enemy
     for (i = 0; i < num_enemiesx; i++)
     {
         for (k = 0; k < num_enemiesy; k++)
@@ -199,7 +200,7 @@ bool Enemies::checkCollisionWithFloor()
     return false;
 }
 
-//3rd collision function 
+//3rd collision function
 //Checks if the player's bullet hit an enemy
 //iterates through enemy positions and compares to bullet position
 //if they match, function returns true
@@ -233,7 +234,7 @@ bool Enemies::checkCollision(Bullet playerBullet)
 //Function repsonsible for enemy movment
 void Enemies::shiftEnemies()
 {
-    //Shifts the enemies right 
+    //Shifts the enemies right
     if ((x + 182 != 302) & !shift_Down)
     {
         x += 20;
@@ -284,16 +285,16 @@ void Enemies::drawEnemies()
     }
 }
 
-//Creates the class Player1 
+//Creates the class Player1
 class Player1
 {
 public:
-//sets all the public functions and variables
+    //sets all the public functions and variables
     Player1();
     void drawSelf(int);
     bool enemyCollision(Enemies *e);
     bool hasWon();
-    //lives, score, and pos are all updated vairables 
+    //lives, score, and pos are all updated vairables
     int lives = 3;
     int pos = 140;
     int score;
@@ -390,7 +391,8 @@ void playGameUI(Player1 *player)
     LCD.WriteAt(("%f", player->score), 270, 6);
 }
 
-void readHighestFromSD(int *f, int *m){
+void readHighestFromSD(int *f, int *m)
+{
     int fastest;
     int mostLives;
     FEHFile *fptr = SD.FOpen("stats.txt", "r");
@@ -401,20 +403,21 @@ void readHighestFromSD(int *f, int *m){
     SD.FClose(fptr);
 }
 
-void writeHighestToSD(int *f, int *m){
+void writeHighestToSD(int *f, int *m)
+{
     int fastest;
     int mostLives;
     FEHFile *fptr = SD.FOpen("stats.txt", "r");
     SD.FScanf(fptr, "%d\n", &fastest);
     SD.FScanf(fptr, "%d", &mostLives);
     SD.FClose(fptr);
-    if ((*f < fastest) & (*m >= mostLives)){ 
+    if ((*f < fastest) & (*m >= mostLives))
+    {
         FEHFile *fptr2 = SD.FOpen("stats.txt", "w+");
-        SD.FPrintf(fptr2, "%d\n",*f);
+        SD.FPrintf(fptr2, "%d\n", *f);
         SD.FPrintf(fptr2, "%d\n", *m);
         SD.FClose(fptr2);
     }
-    
 }
 
 //The main function of the program
@@ -444,15 +447,18 @@ void playGameScreen(int *returnVal, int diff, int *finalPoints)
     player.drawSelf(160);
     Bullet firedBullet(160, 100);
     // For Hard Diff, change the update time so that the updates actually happen in time
-    if (diff == 1){
+    if (diff == 1)
+    {
         updateTime = 0.000835;
-    }else{
+    }
+    else
+    {
         updateTime = 0.00167;
     }
     // Main game loop runs continuously unless broken
     while (1)
     {
-        // Begin timing 
+        // Begin timing
         timeElapsed = TimeNow() - time;
         // Check for touch, and store in pointers to x and y
         if (LCD.Touch(&x, &y))
@@ -508,7 +514,7 @@ void playGameScreen(int *returnVal, int diff, int *finalPoints)
             e.shoot(player.pos, 220);
             hasLostLife = false;
         }
-        //Checks to see if the fired bullet hits an enemy 
+        //Checks to see if the fired bullet hits an enemy
         //if the bullet does, update the gameUI with the new score
         //Also delet the enemy that was hit
         if (e.checkCollision(firedBullet))
@@ -521,17 +527,19 @@ void playGameScreen(int *returnVal, int diff, int *finalPoints)
         }
         //Checks to see if the player collides with enemy bullet
         //If it does, subtract one from players lives
-        if (e.checkPlayerCollision(player.pos, 220)){
-            if (!hasLostLife){
+        if (e.checkPlayerCollision(player.pos, 220))
+        {
+            if (!hasLostLife)
+            {
                 player.lives = player.lives - 1;
                 hasLostLife = true;
             }
         }
         //checks if player has killed all enemies
-        
+
         if (player.hasWon())
         {
-            int finalTimeElapsed = TimeNow()-time3;
+            int finalTimeElapsed = TimeNow() - time3;
             writeHighestToSD(&finalTimeElapsed, &player.lives);
             *returnVal = 7;
             *finalPoints = player.score;
@@ -559,10 +567,10 @@ void statScreen(int *returnVal)
     LCD.Clear();
     while (1)
     {
-        //Draws the information loaded from the sd card dynamically 
+        //Draws the information loaded from the sd card dynamically
         LCD.DrawRectangle(10, 10, 300, 220);
         LCD.WriteAt("Statistics", 100, 10);
-        LCD.WriteAt("Most Lives Remaining: ",20,50);
+        LCD.WriteAt("Most Lives Remaining: ", 20, 50);
         LCD.WriteAt(("%d", mostLives), 270, 50);
         LCD.WriteAt("Fastest to complete: ", 20, 80);
         LCD.WriteAt(("%d s", fastest), 200, 100);
@@ -591,10 +599,10 @@ void creditScreen(int *returnVal)
         //include back button
         LCD.DrawRectangle(10, 10, 60, 25);
         LCD.WriteAt("Back", 10, 10);
-        //draws the names of the creators 
+        //draws the names of the creators
         LCD.WriteAt("Dhruv Venkataraman", 10, 70);
         LCD.WriteAt("Nick White", 10, 110);
-        //checks for touch on the back button 
+        //checks for touch on the back button
         //if touched returnVal is set to 4 to go back to main menu
         if (LCD.Touch(&x, &y))
         {
@@ -618,11 +626,11 @@ void instructScreen(int *returnVal)
         LCD.WriteAt("Instructions:", 100, 10);
         LCD.WriteAt("Your objective is to", 10, 40);
         LCD.WriteAt("shoot the enemy coming", 10, 70);
-        LCD.WriteAt("towards you. Use the", 10, 100);
-        LCD.WriteAt("Fire button to shoot a", 10, 130);
-        LCD.WriteAt("laser. Use the left and", 10, 160);
-        LCD.WriteAt("right arrows to change", 10, 190);
-        LCD.WriteAt("direction.", 10, 220);
+        LCD.WriteAt("towards you. Position", 10, 100);
+        LCD.WriteAt("your player using the", 10, 130);
+        LCD.WriteAt("mouse, to shoot a laser", 10, 160);
+        LCD.WriteAt("at the aliens...But dont", 10, 190);
+        LCD.WriteAt("get hit 3 times, youll die.", 10, 220);
         LCD.WriteAt("Back", 10, 10);
         if (LCD.Touch(&x, &y))
         {
@@ -636,7 +644,7 @@ void instructScreen(int *returnVal)
 
     //Enemy enemies;
 }
-//Draws the lose screen 
+//Draws the lose screen
 void loseScreen(int *returnVal, int *finalPoints)
 {
     while (true)
@@ -729,7 +737,7 @@ void startScreen(int *returnVal)
         FEHIMAGE ship2;
         ship2.Open("SpaceShip21FEH.pic");
         ship2.Draw(75, 180);
-        //checks if buttons were pressed 
+        //checks if buttons were pressed
         //If buttons pressed, the appropiate returnVal is set
         if (LCD.Touch(&x, &y))
         {
@@ -771,12 +779,13 @@ void startScreen(int *returnVal)
     }
 }
 
-
 //Screen where difficulty is selcted
-void difficultyScreen(int *returnValue, int *difficultySelector){
+void difficultyScreen(int *returnValue, int *difficultySelector)
+{
     LCD.Clear();
-    float x,y;
-    while (1){
+    float x, y;
+    while (1)
+    {
         //This draws the visual menu
         LCD.DrawRectangle(10, 30, 150, 40);
         LCD.DrawRectangle(10, 70, 150, 40);
@@ -787,8 +796,8 @@ void difficultyScreen(int *returnValue, int *difficultySelector){
         //This checks if the user has pressed a button
         //If button pressed, returnValue is set to 0(i.e. playGame())
         if (LCD.Touch(&x, &y))
-        {   
-            
+        {
+
             if (((x < 150) & (x > 10)) & ((y > 32) & (y < 72)))
             {
                 *returnValue = 0;
@@ -810,17 +819,16 @@ void difficultyScreen(int *returnValue, int *difficultySelector){
                 LCD.SetBackgroundColor(BLACK);
                 break;
             }
-            
-           LCD.WriteLine("Screen reached");
-        }
 
+            LCD.WriteLine("Screen reached");
+        }
     }
 }
 
 //Int main acts as a switch case selection structure
 int main()
 {
-//other functions manipulate returnValue and change the outcome of the switch
+    //other functions manipulate returnValue and change the outcome of the switch
     int returnValue;
     int difficultyValue;
     bool shouldExit;
@@ -828,12 +836,12 @@ int main()
     startScreen(&returnValue);
     while (1)
     {
-        //the switch will direct the game to the correct screen 
+        //the switch will direct the game to the correct screen
         //each returnValue is mapped to a different screen / function call
         switch (returnValue)
         {
         case 0:
-            playGameScreen(&returnValue, difficultyValue,&finalPoints);
+            playGameScreen(&returnValue, difficultyValue, &finalPoints);
             Sleep(.1);
             break;
         case 1:
@@ -868,7 +876,7 @@ int main()
             Sleep(.1);
             break;
         }
-        
+
         if (shouldExit)
         {
             return 1;
