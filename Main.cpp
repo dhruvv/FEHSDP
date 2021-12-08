@@ -64,7 +64,7 @@ void Enemy::drawSelf()
     {
         FEHIMAGE invader;
         invader.Open("SpaceInvaderFEH.pic");
-        invader.Draw(x, y);
+        invader.Draw(y, x);
         //LCD.SetFontColor(WHITE);
         //LCD.DrawRectangle(x, y, box_size, box_size);
         //LCD.FillRectangle(x, y, box_size, box_size);
@@ -113,7 +113,7 @@ bool Enemies::checkCollision(Bullet playerBullet)
     {
         for (k = 3; k > -1; k--)
         {
-            if (((abs(playerBullet.x - (enemiesArray[i][k].x)) <= 6) & ((abs(playerBullet.y - enemiesArray[i][k].y) <= 6))))
+            if (((abs(playerBullet.x - (enemiesArray[i][k].x)) <= 13) & ((abs(playerBullet.y - enemiesArray[i][k].y) <= 13))))
             {
                 if (!enemiesArray[i][k].toRender)
                 {
@@ -139,7 +139,7 @@ bool Enemies::checkCollision(Bullet playerBullet)
 
 void Enemies::shiftEnemies()
 {
-    if ((x + 49 != 299) & !shift_Down)
+    if ((x + 126 != 301) & !shift_Down)
     {
         x += 25;
         shift_Down = false;
@@ -152,7 +152,7 @@ void Enemies::shiftEnemies()
             shift_Down = false;
         }
     }
-    if (x + 49 == 299)
+    if (x + 126 == 301)
     {
         y += 20;
         shift_Down = true;
@@ -171,10 +171,10 @@ void Enemies::drawEnemies()
     int j = 0;
     int k = 0;
     int y_pos;
-    for (int i = 0; i < 7; i++)
+    for (int i = 0; i < 4; i++)
     {
         y_pos = i * 14;
-        for (k = 0; k < 4; k++)
+        for (k = 0; k < 7; k++)
         {
             enemiesArray[i][k].x = x + 17 * k;
             enemiesArray[i][k].y = y + y_pos;
