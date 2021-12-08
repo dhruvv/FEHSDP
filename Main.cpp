@@ -99,6 +99,7 @@ public:
     Enemies();
     void drawEnemies();
     void shiftEnemies();
+    void shoot();
     bool checkCollision(Bullet, Player1 *);
     int num_enemiesx;
     int num_enemiesy;
@@ -128,9 +129,9 @@ bool Enemies::checkCollision(Bullet playerBullet, Player1 *player)
     int k = 0;
     int num_enemiesx = 11;
     int num_enemiesy = 7;
-    for (i = num_enemiesx; i > -1; i--)
+    for (i = 0; i < 11; i++)
     {
-        for (k = num_enemiesy; k > -1; k--)
+        for (k = 0; k < 7; k++)
         {
             if (((abs(playerBullet.x - (enemiesArray[i][k].x)) <= 13) & ((abs(playerBullet.y - enemiesArray[i][k].y) <= 13))))
             {
@@ -253,7 +254,6 @@ void playGameUI(Player1 *player)
     LCD.WriteAt(("%f", player->lives), 130, 6);
     LCD.WriteAt("Score: ", 200, 6);
     LCD.WriteAt(("%f", player->score), 270, 6);
-    //LCD.WriteChar()
 }
 
 void playGameScreen(int *returnVal)
@@ -308,18 +308,21 @@ void playGameScreen(int *returnVal)
             e.drawEnemies();
             playGameUI(&player);
         }
-        if (e.checkCollision(firedBullet, &player))
-        {
-            firedBullet.x = player.pos;
-            firedBullet.y = 220;
-            firedBullet.drawSelf(firedBullet.x, firedBullet.y);
-        }
+
         time2Elapsed = TimeNow() - time2;
         if (time2Elapsed > 2.0)
         {
             e.shiftEnemies();
             e.drawEnemies();
             time2 = TimeNow();
+        }
+        if (e.checkCollision(firedBullet, &player))
+        {
+            firedBullet.x = player.pos;
+            firedBullet.y = 220;
+            firedBullet.drawSelf(firedBullet.x, firedBullet.y);
+            player.score += 10;
+            playGameUI(&player);
         }
 
         if (player.lives == 0)
@@ -454,9 +457,7 @@ void startScreen(int *returnVal)
     float x, y;
     while (1)
     {
-        LCD.SetFontColor(WHITE);
-        LCD.DrawRectangle(0, 0, 320, 240);
-        LCD.FillRectangle(0, 0, 320, 320);
+        LCD.SetBackgroundColor(BEIGE);
         LCD.SetFontColor(RED);
         LCD.WriteAt("*Space Invaders*", 70, 10);
         LCD.SetFontColor(BURLYWOOD);
