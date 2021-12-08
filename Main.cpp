@@ -34,7 +34,7 @@ Bullet::Bullet()
 }
 void Bullet::drawSelf(int x, int y)
 {
-    LCD.DrawRectangle(x, y, 2, 2);
+    LCD.DrawRectangle(x + 5, y, 2, 2);
 }
 
 class Enemy
@@ -48,7 +48,6 @@ public:
     int y;
     void drawSelf();
     bool toRender;
-    int box_size = 5;
 };
 
 Enemy::Enemy()
