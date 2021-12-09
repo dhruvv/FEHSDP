@@ -200,6 +200,8 @@ bool Enemies::checkCollisionWithFloor()
     return false;
 }
 
+
+
 //3rd collision function
 //Checks if the player's bullet hit an enemy
 //iterates through enemy positions and compares to bullet position
